@@ -152,7 +152,7 @@ void shell_loop(void) {
 
         status = psh_execute(args);
 
-        if (status = 0) {
+        if (status == 0) {
             free(line);
             free(args);
             line = NULL;

@@ -9,7 +9,7 @@ GCC (or any C compiler).
 
 ### Compile
 ```bash
-gcc -o psh shell.c
+gcc -o psh src/main.c
 ```
 
 ### Run

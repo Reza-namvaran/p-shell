@@ -12,13 +12,15 @@ int psh_cd(char **args);
 int psh_exit(char **args);
 int psh_execute(char **args);
 int psh_lunch(char **args);
+int psh_help(char **args);
 void shell_loop(void);
 
-char *builtin_str[] = { "cd", "exit"};
+char *builtin_str[] = { "cd", "help", "exit"};
 
 int (*builtin_funcs[]) (char **) = {
     &psh_cd,
-    psh_exit
+    &psh_help,
+    &psh_exit
 };
 
 int psh_cd(char **args) {
@@ -32,6 +34,19 @@ int psh_cd(char **args) {
 
     return 1;
 }
+
+int psh_help(char **args) {
+  printf("Welcome to P-Shell (psh)!\n");
+  printf("Type program names and arguments, and hit enter.\n");
+  printf("The following are built-in commands:\n");
+  int num_builtins = sizeof(builtin_str) / sizeof(char *);
+  for (int i = 0; i < num_builtins; i++) {
+    printf("  - %s\n", builtin_str[i]);
+  }
+  printf("Use the man command for information on other programs.\n");
+  return 1;
+}
+
 
 int psh_exit(char **args) {
     return 0;

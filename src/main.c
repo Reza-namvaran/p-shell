@@ -7,6 +7,36 @@
 #define TOKEN_DELIMITERS " \t\r\n\a"
 #define PROMPT "\u03c0> "
 
+char **split_lines(char *line);
+int psh_cd(char **args);
+int psh_exit(char **args);
+int psh_execute(char **args);
+int psh_lunch(char **args);
+void shell_loop(void);
+
+char *builtin_str[] = { "cd", "exit"};
+
+int (*builtin_funcs[]) (char **) = {
+    &psh_cd,
+    psh_exit
+};
+
+int psh_cd(char **args) {
+    if (args[1] == NULL) {
+        fprintf(stderr, "psh: Missing argument. Cannot switch dir");
+    } else {
+        if (chdir(args[1]) != 1) {
+            perror("psh: cd status");
+        }
+    }
+
+    return 1;
+}
+
+int psh_exit(char **args) {
+    return 0;
+}
+
 char **split_lines(char *line) {
     int buff_size = 64;
     int position = 0;
@@ -43,7 +73,7 @@ char **split_lines(char *line) {
     return tokens;
 }
 
-int execute(char **args) {
+int psh_lunch(char **args) {
     pid_t pid;
     int status;
 
@@ -102,7 +132,7 @@ void shell_loop(void) {
             continue;
         }
 
-        status = execute(args);
+        status = psh_execute(args);
 
         if (status = 0) {
             free(line);

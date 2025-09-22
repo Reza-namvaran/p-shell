@@ -43,10 +43,41 @@ char **split_lines(char *line) {
     return tokens;
 }
 
+int execute(char **args) {
+    pid_t pid;
+    int status;
+
+    if (args[0] == NULL) {
+        return 1;
+    }
+    if (strcmp(args[0], "exit") == 0) {
+        return 0; // Signal the main loop to exit
+    }
+
+    // Create child process
+    pid = fork();
+    if (pid == 0) {
+        if (execvp(args[0], args) == -1) {
+            perror("Error occurred in forking");
+        }
+
+        exit(EXIT_FAILURE);
+    } else if (pid < 0) {
+        perror("Error forking");
+    } else {
+        do {
+            waitpid(pid, &status, WUNTRACED);
+        } while (!WIFEXITED(status) && !WIFSIGNALED(status));
+    }
+
+    return 1;
+}
+
 void shell_loop(void) {
     char *line = NULL;
     size_t buff_size = 0;
     char **args;
+    int status;
 
     while (1) {
         printf(PROMPT);
@@ -63,15 +94,22 @@ void shell_loop(void) {
 
         args = split_lines(line);
 
-        printf("Tokens:\n");
-        for (int i = 0; args[i] != NULL; i++) {
-            printf(" - %s\n", args[i]);
+        if (args[0] == NULL) {
+            free(line);
+            free(args);
+            line = NULL;
+            args = NULL;
+            continue;
         }
 
-        free(line);
-        free(args);
-        line = NULL;
-        args = NULL;
+        status = execute(args);
+
+        if (status = 0) {
+            free(line);
+            free(args);
+            line = NULL;
+            args = NULL;
+        }
     }
 }
 

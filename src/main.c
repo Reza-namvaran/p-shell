@@ -103,6 +103,24 @@ int psh_lunch(char **args) {
     return 1;
 }
 
+int psh_execute(char **args) {
+    if (args[0] == NULL) {
+        return 1; // Empty command
+    }
+
+    /// TODO: Change to fast lookup  
+    // Loop through the built-in command names
+    int num_builtin_funcs = sizeof(builtin_str) / sizeof(char *);
+    for (int i = 0; i < num_builtin_funcs; i++) {
+        if (strcmp(args[0], builtin_str[i]) == 0) {
+            return (*builtin_funcs[i])(args);
+        }
+    }
+
+    // If not builtin lunch in a separate process
+    return psh_lunch(args);
+}
+
 void shell_loop(void) {
     char *line = NULL;
     size_t buff_size = 0;

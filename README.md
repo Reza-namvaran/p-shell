@@ -6,15 +6,16 @@ A simple Unix-like shell written in C.
 
 A Unix-like system (Linux, macOS, WSL).
 GCC (or any C compiler).
+Make
 
 ### Compile
 ```bash
-gcc -o psh src/main.c
+make
 ```
 
 ### Run
 ```
-./psh
+./build/psh
 ```
 
 ### Usage Examples
